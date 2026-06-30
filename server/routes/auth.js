@@ -18,4 +18,16 @@ router.post("/logout", logout);
 router.post("/refresh", refresh);
 router.get("/me", requireAuth, me);
 
+// TEMPORARY DEBUG ROUTE — lists registered emails (no passwords) to diagnose
+// "already registered" confusion. Remove this before finishing the project.
+router.get("/_debug/list-emails", async (req, res, next) => {
+  try {
+    const User = require("../models/User");
+    const users = await User.find({}, "email createdAt").sort({ createdAt: -1 }).limit(50);
+    res.json({ count: users.length, users });
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;
